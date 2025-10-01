@@ -37,7 +37,5 @@ router.delete('/account', protect, deleteUser);
 router.route('/favorites').get(protect, getUserFavorites).post(protect, addFavorite);
 router.route('/favorites/:serviceId').delete(protect, removeFavorite);
 
-router.route('/cart').get(protect, getUserCart).post(protect, addToCart);
-router.route('/cart/:serviceId').delete(protect, removeFromCart);
 
 export default router;

@@ -95,23 +95,3 @@ export const removeFavorite = asyncHandler(async (req, res) => {
   res.json({ message: 'Removed from favorites' });
 });
 
-// --- Cart ---
-export const getUserCart = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate({
-    path: 'cart.service',
-    populate: { path: 'category', select: 'name slug' }
-  });
-  res.json(user.cart);
-});
-
-export const addToCart = asyncHandler(async (req, res) => {
-  const { serviceId, quantity } = req.body;
-  await User.findByIdAndUpdate(req.user._id, { $addToSet: { cart: { service: serviceId, quantity } } });
-  res.status(201).json({ message: 'Added to cart' });
-});
-
-export const removeFromCart = asyncHandler(async (req, res) => {
-  const { serviceId } = req.params;
-  await User.findByIdAndUpdate(req.user._id, { $pull: { cart: { service: serviceId } } });
-  res.json({ message: 'Removed from cart' });
-});
