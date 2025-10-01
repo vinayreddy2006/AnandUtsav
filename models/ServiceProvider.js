@@ -29,7 +29,6 @@ const serviceProviderSchema = new mongoose.Schema({
     ],
     required: true
   },
-  gender: { type: String, enum: ["Male", "Female", "Other"], default: "Other" },
   phone: { type: String, required: true, unique: true },
   location: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true },

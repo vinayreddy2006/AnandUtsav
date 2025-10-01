@@ -15,10 +15,6 @@ const userSchema = new mongoose.Schema({
   gender: { type: String, enum: ["Male", "Female", "Other"], default: "Other" },
   previousBookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
-  cart: [{
-    service: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
-    quantity: { type: Number, default: 1 }
-  }]
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
