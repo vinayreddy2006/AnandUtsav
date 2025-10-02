@@ -1,13 +1,14 @@
+// /routes/categoryRoutes.js
 import express from 'express';
 import {
   getAllCategories,
-  getServicesByCategorySlug,
-  createCategory,
+  getServicesByCategory,
+  createCategory, // Added for admin/seeding purposes
 } from '../controllers/category.js';
 
 const router = express.Router();
 
-router.route('/').get(getAllCategories).post(createCategory);
-router.route('/:slug/services').get(getServicesByCategorySlug);
+router.route('/').get(getAllCategories).post(createCategory); // Added POST for creation
+router.route('/:slug/services').get(getServicesByCategory);
 
 export default router;

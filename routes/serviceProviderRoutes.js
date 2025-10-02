@@ -5,18 +5,15 @@ import {
     loginProvider,
     requestPasswordResetOtp,
     resetPassword,
-    getServiceProviderById,
-} from '../controllers/serviceProvider.js'; // <-- Now imports from one file
+    getProviderProfileById,
+} from '../controllers/serviceProvider.js';
 
 const router = express.Router();
 
-// --- AUTHENTICATION ROUTES ---
 router.post('/register', registerProvider);
 router.post('/login', loginProvider);
 router.post('/forgot-password', requestPasswordResetOtp);
 router.post('/reset-password', resetPassword);
-
-// --- DATA FETCHING ROUTES ---
-router.route('/:id').get(getServiceProviderById);
+router.get('/:id', getProviderProfileById);
 
 export default router;

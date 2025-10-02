@@ -1,3 +1,4 @@
+// /controllers/serviceProvider.js
 import asyncHandler from 'express-async-handler';
 import ServiceProvider from '../models/ServiceProvider.js';
 import bcrypt from 'bcrypt';
@@ -8,8 +9,9 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
-// --- AUTHENTICATION ---
-
+// @desc   Register a new Service Provider
+// @route  POST /api/providers/register
+// @access Public
 export const registerProvider = asyncHandler(async (req, res) => {
     const { name, email, phone, location, password } = req.body;
     const providerExists = await ServiceProvider.findOne({ email });
@@ -25,6 +27,9 @@ export const registerProvider = asyncHandler(async (req, res) => {
     res.status(201).json({ _id: provider._id, name: provider.name, email: provider.email, token: generateToken(provider._id) });
 });
 
+// @desc   Login a Service Provider
+// @route  POST /api/providers/login
+// @access Public
 export const loginProvider = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const provider = await ServiceProvider.findOne({ email });
@@ -37,7 +42,9 @@ export const loginProvider = asyncHandler(async (req, res) => {
     }
 });
 
-
+// @desc   Request a password reset OTP
+// @route  POST /api/providers/forgot-password
+// @access Public
 export const requestPasswordResetOtp = asyncHandler(async (req, res) => {
     const { email } = req.body;
     const provider = await ServiceProvider.findOne({ email });
@@ -49,38 +56,23 @@ export const requestPasswordResetOtp = asyncHandler(async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     provider.resetPasswordOtp = otp;
-    
-    // --- CHANGE: Updated to 2 minutes ---
     provider.resetPasswordOtpExpires = Date.now() + 2 * 60 * 1000;
-    
-    // --- DEBUG LOG ---
-    console.log('--------------------');
-    console.log('OTP Generated for:', email);
-    console.log('Saving OTP that expires at:', new Date(provider.resetPasswordOtpExpires).toLocaleString());
-    console.log('--------------------');
-
     await provider.save();
 
     await sendEmail(email, 'Your Password Reset OTP', `Your OTP to reset your AnandUtsav provider password is: ${otp}`);
     res.status(200).json({ message: `Password reset OTP sent to ${email}` });
 });
 
-
 // @desc   Reset provider password using OTP
 // @route  POST /api/providers/reset-password
+// @access Public
 export const resetPassword = asyncHandler(async (req, res) => {
     const { email, otp, newPassword } = req.body;
-
-    if (!email || !otp || !newPassword) {
-        res.status(400);
-        throw new Error('Please provide email, OTP, and a new password.');
-    }
-
 
     const provider = await ServiceProvider.findOne({
         email,
         resetPasswordOtp: otp,
-        resetPasswordOtpExpires: { $gt: Date.now() }, // The check happens here
+        resetPasswordOtpExpires: { $gt: Date.now() },
     });
 
     if (!provider) {
@@ -96,11 +88,13 @@ export const resetPassword = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Password has been reset successfully.' });
 });
 
-// --- DATA FETCHING ---
-
-export const getServiceProviderById = asyncHandler(async (req, res) => {
-    // This query correctly does NOT populate services
-    const provider = await ServiceProvider.findById(req.params.id);
+// @desc   Get a provider's public profile by ID
+// @route  GET /api/providers/:id
+// @access Public
+export const getProviderProfileById = asyncHandler(async (req, res) => {
+    const provider = await ServiceProvider.findById(req.params.id)
+        .select('-password -resetPasswordOtp -resetPasswordOtpExpires')
+        .populate('services', 'name images priceInfo');
 
     if (provider) {
         res.json(provider);
