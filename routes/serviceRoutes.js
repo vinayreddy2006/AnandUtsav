@@ -1,15 +1,13 @@
-// /routes/serviceRoutes.js
 import express from 'express';
-import {
-  getServices,
-  getServiceById,
-  getServicePreview,
-} from '../controllers/service.js';
+import { createService, getServices, getServiceById } from '../controllers/service.js';
+import { protectProvider } from '../middlewares/providerAuth.js'; // Use provider protection
 
 const router = express.Router();
 
-router.route('/').get(getServices);
-router.route('/preview').get(getServicePreview);
+router.route('/')
+    .post(protectProvider, createService) // This route is now protected
+    .get(getServices);
+
 router.route('/:id').get(getServiceById);
 
 export default router;

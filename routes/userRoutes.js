@@ -13,9 +13,6 @@ import {
   getUserFavorites,
   addFavorite,
   removeFavorite,
-  getUserCart,
-  addToCart,
-  removeFromCart,
 } from '../controllers/user.js';
 import { protect } from '../middlewares/auth.js';
 

@@ -10,6 +10,7 @@ import userRoutes from './routes/userRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import serviceProviderRoutes from './routes/serviceProviderRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -24,6 +25,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/providers', serviceProviderRoutes);
 
 app.get('/', (req, res) => {
   res.send('AnandUtsav API is running...');
