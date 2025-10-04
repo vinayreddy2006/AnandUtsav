@@ -11,14 +11,21 @@ const messageSchema = new mongoose.Schema({
     required: true,
     enum: ['User', 'ServiceProvider']
   },
-  content: { type: String, trim: true },
   conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },
-  isRead: {
-    type: Boolean,
-    default: false
-  }
+  isRead: { type: Boolean, default: false },
 
+  messageType: {
+    type: String,
+    enum: ['text', 'image', 'video', 'audio', 'file'],
+    default: 'text'
+  },
+  content: { 
+    type: String,
+    required: true
+  }
 }, { timestamps: true });
+
+messageSchema.index({ conversation: 1, isRead: 1, sender: 1 });
 
 const Message = mongoose.model("Message", messageSchema);
 export default Message;

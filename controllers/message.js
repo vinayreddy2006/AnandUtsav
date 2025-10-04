@@ -1,5 +1,7 @@
 import Message from '../models/Message.js';
 import Conversation from '../models/Conversation.js';
+import cloudinary from '../config/cloudinary.js'; 
+import fs from 'fs'; 
 
 export const allMessages = async (req, res) => {
   try {
@@ -48,6 +50,49 @@ export const sendMessage = async (req, res) => {
       $push: { messages: message._id }
     });
     res.json(message);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+export const sendMediaMessage = async (req, res) => {
+  try {
+    const { conversationId } = req.body;
+    const sender = req.user || req.provider;
+
+    if (!req.file || !conversationId) {
+        return res.status(400).json({ success: false, message: 'No file uploaded or conversationId missing.' });
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "auto", 
+    });
+
+    fs.unlinkSync(req.file.path);
+  
+    let messageType = 'file';
+    if (result.resource_type === 'image') messageType = 'image';
+    if (result.resource_type === 'video') {
+        messageType = result.is_audio ? 'audio' : 'video';
+    }
+
+    const newMessageData = {
+        sender: sender._id,
+        senderModel: req.user ? 'User' : 'ServiceProvider',
+        content: result.secure_url,
+        conversation: conversationId,
+        messageType: messageType,
+    };
+
+    let message = await Message.create(newMessageData);
+    
+    message = await message.populate("sender", "name fullName");
+    message = await message.populate("conversation");
+    await Conversation.findByIdAndUpdate(conversationId, { latestMessage: message });
+
+    res.json(message);
+
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
