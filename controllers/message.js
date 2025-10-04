@@ -72,8 +72,9 @@ export const sendMessage = asyncHandler(async (req, res) => {
 
     let message = await Message.create(newMessageData);
 
-    message = await message.populate("sender", "name fullName")
-        .populate("conversation");
+    await message.populate("sender", "name fullName");
+    await message.populate("conversation");
+
     
     await Conversation.findByIdAndUpdate(conversationId, {
         latestMessage: message,
