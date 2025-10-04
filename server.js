@@ -10,7 +10,7 @@ import http from 'http';
 import { Server } from 'socket.io'; 
 
 import connectDB from './config/db.js';
-import { notFound, errorHandler } from './middlewares/error.js';
+import { notFound } from './middlewares/error.js';
 
 
 import userRoutes from './routes/userRoutes.js';
@@ -47,15 +47,13 @@ app.get('/', (req, res) => {
 
 // --- Error Handling ---
 app.use(notFound);
-app.use(errorHandler);
-
 
 // --- Server Listening ---
 const PORT = process.env.PORT || 3004;
 server.listen(PORT, console.log(`Server running on port ${PORT}`));
 
 
-// SOCKET.IO INITIALIZATION      
+// SOCKET.IO INITIALIZATION
 
 const io = new Server(server, {
   pingTimeout: 60000,

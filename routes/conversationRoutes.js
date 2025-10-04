@@ -1,32 +1,19 @@
-// /routes/conversationRoutes.js
 import express from 'express';
 import { 
   accessConversation, 
   fetchConversations, 
-  markConversationAsRead // <-- NEW
+  markConversationAsRead
 } from '../controllers/conversation.js';
 import { protect } from '../middlewares/auth.js';
-import { protectProvider } from '../middlewares/providerAuth.js';
+import { protectAll } from '../middlewares/protectAll.js'; // <-- NEW IMPORT
 
 const router = express.Router();
 
-const protectAll = (req, res, next) => {
-  // First, try to authenticate as a regular User.
-  protect(req, res, (err) => {
-    if (err) {
-      // If 'protect' fails, the error is caught here.
-      // Now, we ignore that error and try authenticating as a Service Provider.
-      protectProvider(req, res, next);
-    } else {
-      // If 'protect' succeeds, there is no error. We can continue.
-      next();
-    }
-  });
-};
-
+// Route for a USER to start a chat with a PROVIDER.
 router.route('/').post(protect, accessConversation);
-router.route('/').get(protectAll, fetchConversations); 
 
+// These routes can be accessed by either a User or a Provider.
+router.route('/').get(protectAll, fetchConversations);
 router.route('/:conversationId/read').put(protectAll, markConversationAsRead);
 
 export default router;

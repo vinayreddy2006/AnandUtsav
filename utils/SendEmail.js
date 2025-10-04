@@ -1,7 +1,5 @@
 // /utils/SendEmail.js
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-
 
 export const sendEmail = async (to, subject, text, html) => {
   try {
