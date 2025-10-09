@@ -18,7 +18,8 @@ import serviceRoutes from './routes/serviceRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import serviceProviderRoutes from './routes/serviceProviderRoutes.js';
 import conversationRoutes from './routes/conversationRoutes.js'; 
-import messageRoutes from './routes/messageRoutes.js';         
+import messageRoutes from './routes/messageRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';         
 
 
 
@@ -37,9 +38,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/providers', serviceProviderRoutes);
-
 app.use('/api/conversations', conversationRoutes); 
-app.use('/api/messages', messageRoutes);           
+app.use('/api/messages', messageRoutes);   
+app.use('/api/reviews', reviewRoutes);        
 
 app.get('/', (req, res) => {
   res.send('AnandUtsav API is running...');

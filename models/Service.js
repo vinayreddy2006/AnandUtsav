@@ -18,7 +18,14 @@ const serviceSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     unit: { type: String, default: 'per event' },
   },
-
+  avgRating:{
+    type:Number,
+    default:0
+  },
+  reviewCount: {
+      type: Number,
+      default: 0,
+    },
   availability: { type: Boolean, default: true },
 
 }, { timestamps: true });
